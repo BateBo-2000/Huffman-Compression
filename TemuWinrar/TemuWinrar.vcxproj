@@ -129,6 +129,7 @@
   <ItemGroup>
     <ClCompile Include="App.cpp" />
     <ClCompile Include="Archive\Archive.cpp" />
+    <ClCompile Include="Commands\HelpCmd.cpp" />
     <ClCompile Include="Execution\Controller.cpp" />
     <ClCompile Include="Execution\Invoker.cpp" />
     <ClCompile Include="Commands\CheckCmd.cpp" />

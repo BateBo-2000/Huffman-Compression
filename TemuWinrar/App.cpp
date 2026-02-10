@@ -1,16 +1,28 @@
 #pragma once
-#include <string>
-#include <vector>
+#include "App.h"
 
-class Command {
-public:
-	explicit Command(const std::string& name) : cmdName(name) {}
-	virtual ~Command() = default;
+#include "UI/ConsoleInterface.h"
+#include "Execution/Controller.h"
+#include "Execution/Invoker.h"
+#include "Archive/Archive.h"
+#include "Compression/HuffmanCompressor.h"
+#include "Compression/LZWCompressor.h"
 
-	virtual bool execute(const std::vector<std::string>& args) = 0;
-	virtual const std::string& name() const = 0;
-	virtual const std::string& description() const = 0;
+App::App()
+{
+	init();
+}
 
-private:
-	std::string cmdName;
-};
+void App::run()
+{
+	return controller.start();
+}
+
+void App::init()
+{
+	initCmd();
+}
+
+void App::initCmd()
+{
+}

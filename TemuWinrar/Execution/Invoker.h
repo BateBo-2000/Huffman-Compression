@@ -16,6 +16,8 @@ public:
 	void registerCommand(Command* cmd); //takes ownership of the command
 	void execute(const std::string& commandLine);
 	bool exit() const { return shouldExit; }
+	void requestExit() { shouldExit = true; }
+	const std::vector<Command*>& getCommands() const { return commands; }
 
 private:
 	Command* findCommand(const std::string& name);
