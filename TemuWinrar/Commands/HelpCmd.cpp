@@ -6,12 +6,12 @@
 #include <sstream>
 #include <stdexcept>
 
-HelpCommand::HelpCommand(const Invoker& inv, UserInterface& ui)
+HelpCmd::HelpCmd(const Invoker& inv, UserInterface& ui)
     : Command("help"), invoker(inv), ui(ui)
 {
 }
 
-void HelpCommand::execute(const std::vector<std::string>& args)
+void HelpCmd::execute(const std::vector<std::string>& args)
 {
     if (args.size() == 1) {
         printAll();
@@ -26,12 +26,12 @@ void HelpCommand::execute(const std::vector<std::string>& args)
     throw std::invalid_argument("Usage: help OR help <command>");
 }
 
-std::string HelpCommand::description() const
+std::string HelpCmd::description() const
 {
     return "Shows available commands or help for a specific command.";
 }
 
-void HelpCommand::printAll() const
+void HelpCmd::printAll() const
 {
     std::ostringstream out;
     out << "Available commands:\n";
@@ -46,7 +46,7 @@ void HelpCommand::printAll() const
     ui.inform(out.str());
 }
 
-void HelpCommand::printOne(const std::string& cmdName) const
+void HelpCmd::printOne(const std::string& cmdName) const
 {
     const std::vector<Command*>& cmds = invoker.getCommands();
 

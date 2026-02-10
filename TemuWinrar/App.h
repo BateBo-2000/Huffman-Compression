@@ -1,9 +1,9 @@
 #pragma once
 
-class Invoker;
-class Controller;
-class UserInterface;
-class Archive;
+#include "Execution/Invoker.h"
+#include "Execution/Controller.h"
+#include "UI/ConsoleInterface.h"
+#include "Archive/Archive.h"
 
 class App {
 public:
@@ -13,10 +13,9 @@ public:
 private:
     void init();
     void initCmd();
-    
 
-    Invoker* invoker;
-    UserInterface* ui;
-    Controller* controller;
-    Archive* archive;
+    Invoker invoker;
+    ConsoleInterface ui;
+    Archive archive;
+    Controller controller;
 };

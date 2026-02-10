@@ -4,9 +4,9 @@
 class Invoker;
 class UserInterface;
 
-class HelpCommand : public Command {
+class HelpCmd : public Command {
 public:
-    HelpCommand(const Invoker& inv, UserInterface& ui);
+    HelpCmd(const Invoker& inv, UserInterface& ui);
 
     void execute(const std::vector<std::string>& args) override;
     std::string description() const override;

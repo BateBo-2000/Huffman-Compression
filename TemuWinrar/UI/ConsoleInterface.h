@@ -14,6 +14,7 @@ public:
 
     std::string readLine() override {
         std::string line;
+        printColored("> ", Color::White, false);
         std::getline(std::cin, line);
         return line;
     }

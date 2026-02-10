@@ -2,9 +2,9 @@
 #include "Command.h"
 #include "../Execution/Invoker.h"
 
-class ExitCommand : public Command {
+class ExitCmd : public Command {
 public:
-    explicit ExitCommand(Invoker& inv)
+    explicit ExitCmd(Invoker& inv)
         : Command("exit"), invoker(inv) {
     }
 
