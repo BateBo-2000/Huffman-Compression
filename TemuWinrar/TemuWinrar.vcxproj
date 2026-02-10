@@ -138,7 +138,6 @@
     <ClCompile Include="Commands\ZipCmd.cpp" />
     <ClCompile Include="Compression\HuffmanCompressor.cpp" />
     <ClCompile Include="Compression\LZWCompressor.cpp" />
-    <ClCompile Include="UI\ConsoleInterface.cpp" />
     <ClCompile Include="TemuWinrar.cpp" />
   </ItemGroup>
   <ItemGroup>

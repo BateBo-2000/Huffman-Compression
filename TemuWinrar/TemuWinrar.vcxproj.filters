@@ -18,9 +18,6 @@
     <ClCompile Include="TemuWinrar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="UI\ConsoleInterface.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Compression\LZWCompressor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
