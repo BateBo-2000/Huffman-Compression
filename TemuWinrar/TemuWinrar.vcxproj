@@ -139,10 +139,13 @@
     <ClCompile Include="Compression\HuffmanCompressor.cpp" />
     <ClCompile Include="Compression\LZWCompressor.cpp" />
     <ClCompile Include="TemuWinrar.cpp" />
+    <ClCompile Include="Utils\splitWords.inl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
     <ClInclude Include="Archive\Archive.h" />
+    <ClInclude Include="Commands\ExitCmd.h" />
+    <ClInclude Include="Commands\HelpCmd.h" />
     <ClInclude Include="Execution\Controller.h" />
     <ClInclude Include="Execution\Invoker.h" />
     <ClInclude Include="Commands\CheckCmd.h" />
