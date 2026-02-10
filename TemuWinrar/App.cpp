@@ -15,7 +15,7 @@ App::App()
 
 void App::run()
 {
-	return controller.start();
+	
 }
 
 void App::init()
