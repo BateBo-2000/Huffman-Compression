@@ -1,4 +1,4 @@
-# Huffman / LZW Archiver — Command Line Compression Tool
+# Huffman / LZW Archiver â€” Command Line Compression Tool
 
 ## Overview
 
@@ -13,8 +13,8 @@ The focus of the implementation is **correctness**, **algorithmic compression**,
 ### Archive Creation (`zip`)
 - Create an archive from a list of files and/or directories
 - Supports wildcard patterns:
-  - `*` — match multiple characters
-  - `?` — match a single character
+  - `*` â€” match multiple characters
+  - `?` â€” match a single character
 - Directories are processed **recursively**
 - Empty directories are preserved in the archive
 - Supports Huffman or LZW compression
@@ -58,7 +58,6 @@ The focus of the implementation is **correctness**, **algorithmic compression**,
 The archiver supports:
 
 - **Huffman coding**
-- **LZW compression**
 
 ---
 
