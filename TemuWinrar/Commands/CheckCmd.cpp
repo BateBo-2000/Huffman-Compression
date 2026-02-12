@@ -26,5 +26,5 @@ void CheckCmd::execute(const std::vector<std::string>& args)
 
 std::string CheckCmd::description() const
 {
-    return "Checks archive integrity.";
+    return "Checks archive integrity.\nFormat: check <archive>";
 }

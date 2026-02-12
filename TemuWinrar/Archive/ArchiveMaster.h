@@ -6,7 +6,7 @@ class ArchiveMaster {
 public:
     // zip = create if missing + append inputs
     void zip(const std::string& archivePath,
-        const std::vector<std::string>& inputs);
+        const std::string& input);
 
     void unzip(const std::string& archivePath,
         const std::string& outDir);

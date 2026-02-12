@@ -34,5 +34,5 @@ void UnzipCmd::execute(const std::vector<std::string>& args)
 
 std::string UnzipCmd::description() const
 {
-    return "Extracts files from archive.";
+    return "Extracts files from archive.\nFormat: unzip <archive> [<outDir>]";
 }

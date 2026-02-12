@@ -5,15 +5,15 @@
 #include <filesystem>
 #include <stdexcept>
 
-namespace fs = std::filesystem;
+void ArchiveMaster::zip(const std::string& archivePath, const std::string& input) {
 
-void ArchiveMaster::zip(const std::string& archivePath,
-    const std::vector<std::string>& inputs) {
-    if (!fs::exists(archivePath)) {
+    if (!std::filesystem::exists(archivePath)) {
         ArchiveWriter::createEmpty(archivePath);
     }
-
-    ArchiveWriter::append(archivePath, inputs);
+    else if (!std::filesystem::is_regular_file(archivePath)) {
+        throw std::runtime_error("Archive path exists but is not a file");
+    }
+    ArchiveWriter::append(archivePath, input);
 }
 
 void ArchiveMaster::unzip(const std::string& archivePath,

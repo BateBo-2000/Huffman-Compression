@@ -27,5 +27,5 @@ void InfoCmd::execute(const std::vector<std::string>& args)
 
 std::string InfoCmd::description() const
 {
-    return "Shows archive info.";
+    return "Shows archive info.\nFormat: info <archive>";
 }

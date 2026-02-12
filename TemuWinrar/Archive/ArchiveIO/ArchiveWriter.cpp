@@ -186,23 +186,21 @@ void ArchiveWriter::createEmpty(const std::string& path) {
     writeMasterAndFooter(out, empty);
 }
 
-void ArchiveWriter::append(const std::string& path,
-    const std::vector<std::string>& paths) {
+void ArchiveWriter::append(const std::string& archivePath, const std::string& fileFath) {
     std::vector<uint64_t> offs;
     uint64_t masterOff = 0;
 
-    if (!readMasterOffsets(path, offs, masterOff))
-        createEmpty(path), readMasterOffsets(path, offs, masterOff);
+    if (!readMasterOffsets(archivePath, offs, masterOff))
+        createEmpty(archivePath), readMasterOffsets(archivePath, offs, masterOff);
 
-    std::filesystem::resize_file(path, masterOff);
+    std::filesystem::resize_file(archivePath, masterOff);
 
     std::vector<EntryRef> entries;
-    loadEntryRefs(path, offs, entries);
+    loadEntryRefs(archivePath, offs, entries);
 
-    std::ofstream out(path, std::ios::binary | std::ios::app);
+    std::ofstream out(archivePath, std::ios::binary | std::ios::app);
 
-    for (auto& s : paths)
-        appendPathRecursive(out, std::filesystem::path(s), entries);
+    appendPathRecursive(out, std::filesystem::path(fileFath), entries);
 
     writeMasterAndFooter(out, entries);
 }

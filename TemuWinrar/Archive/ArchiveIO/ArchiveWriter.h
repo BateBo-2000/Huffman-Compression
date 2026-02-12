@@ -10,8 +10,7 @@
 class ArchiveWriter {
 public:
     static void createEmpty(const std::string& archivePath);
-    static void append(const std::string& archivePath,
-        const std::vector<std::string>& paths);
+    static void append(const std::string& archivePath, const std::string& fileFath);
 
 private:
     struct EntryRef {

@@ -10,29 +10,31 @@ ZipCmd::ZipCmd(UserInterface& ui, ArchiveMaster& archive)
 void ZipCmd::execute(const std::vector<std::string>& args)
 {
     if (args.size() < 3) {
-        ui.error("Usage: zip <archive> <files/dirs...>");
+        ui.error("Usage: zip <arhcive path> <file path1> [<file path2+>] ...");
         return;
     }
-
     try {
         const std::string& archivePath = args[1];
-        
+
         std::vector<std::string> inputs;
         for (size_t i = 2; i < args.size(); i++)
         {
             inputs.push_back(args[i]);
         }
 
-        archive.zip(archivePath, inputs);
-
-        ui.inform("Zip completed.");
+        for (size_t i = 0; i < inputs.size(); i++)
+        {
+                archive.zip(archivePath, inputs[i]);
+                ui.inform("File "+inputs[i] + " added to archive.");
+        }
     }
     catch (const std::exception& e) {
-        ui.error(std::string("Zip failed: ") + e.what());
+        ui.warn(std::string("Failed to append next file to Archvie.") + e.what());
+        throw;
     }
 }
 
 std::string ZipCmd::description() const
 {
-    return "Creates an archive from files.";
+    return "Creates an archive from files.\nFormat: zip <arhcive path> <file path1> [<file path2+>] ...";
 }
