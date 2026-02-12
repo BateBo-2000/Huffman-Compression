@@ -18,7 +18,7 @@ void ZipCmd::execute(const std::vector<std::string>& args)
         const std::string& archivePath = args[1];
         
         std::vector<std::string> inputs;
-        for (size_t i = 3; i < i<args.size(); i++)
+        for (size_t i = 2; i < args.size(); i++)
         {
             inputs.push_back(args[i]);
         }
