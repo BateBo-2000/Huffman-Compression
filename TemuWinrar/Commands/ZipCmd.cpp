@@ -9,18 +9,19 @@ ZipCmd::ZipCmd(UserInterface& ui, ArchiveMaster& archive)
 
 void ZipCmd::execute(const std::vector<std::string>& args)
 {
-    if (args.size() < 2) {
+    if (args.size() < 3) {
         ui.error("Usage: zip <archive> <files/dirs...>");
         return;
     }
 
     try {
-        const std::string& archivePath = args[0];
-
-        std::vector<std::string> inputs(
-            args.begin() + 1,
-            args.end()
-        );
+        const std::string& archivePath = args[1];
+        
+        std::vector<std::string> inputs;
+        for (size_t i = 3; i < i<args.size(); i++)
+        {
+            inputs.push_back(args[i]);
+        }
 
         archive.zip(archivePath, inputs);
 

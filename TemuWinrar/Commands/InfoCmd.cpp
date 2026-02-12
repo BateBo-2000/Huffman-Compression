@@ -11,13 +11,13 @@ InfoCmd::InfoCmd(UserInterface& ui, ArchiveMaster& archive)
 
 void InfoCmd::execute(const std::vector<std::string>& args)
 {
-    if (args.size() != 1) {
-        ui.error("Usage: info");
+    if (args.size() != 2) {
+        ui.error("Usage: info <archive>");
         return;
     }
 
     try {
-        std::string text = archive.info(args[0]);
+        std::string text = archive.info(args[1]);
         ui.inform(text);
     }
     catch (const std::exception& e) {

@@ -10,13 +10,13 @@ CheckCmd::CheckCmd(UserInterface& ui, ArchiveMaster& archive)
 
 void CheckCmd::execute(const std::vector<std::string>& args)
 {
-    if (args.size() != 1) {
+    if (args.size() != 2) {
         ui.error("Usage: check <archive>");
         return;
     }
 
     try {
-        std::string result = archive.check(args[0]);
+        std::string result = archive.check(args[1]);
         ui.inform(result);
     }
     catch (const std::exception& e) {

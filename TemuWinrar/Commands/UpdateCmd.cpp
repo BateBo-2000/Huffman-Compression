@@ -10,7 +10,7 @@ UpdateCmd::UpdateCmd(UserInterface& ui, ArchiveMaster& archive)
 void UpdateCmd::execute(const std::vector<std::string>& args)
 {
     if (args.size() < 1) {
-        ui.error("Usage: update <archive> <files...>");
+        ui.error("Usage: update <archive> <files>");
         return;
     }
 
@@ -19,8 +19,8 @@ void UpdateCmd::execute(const std::vector<std::string>& args)
         if (args.size() > 1)
             inputs.assign(args.begin() + 1, args.end());
 
-        archive.update(args[0], inputs);
-        ui.inform("Update completed."); // practically won't happen now
+        archive.update(args[1], inputs);
+        ui.inform("Update completed.");
     }
     catch (const std::exception& e) {
         ui.error(std::string("Update failed: ") + e.what());

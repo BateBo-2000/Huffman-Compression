@@ -15,7 +15,7 @@ void UnzipCmd::execute(const std::vector<std::string>& args)
     }
 
     try {
-        archive.unzip(args[0], args[1]);
+        archive.unzip(args[1], args[2]);
         ui.inform("Unzip completed.");
     }
     catch (const std::exception& e) {
