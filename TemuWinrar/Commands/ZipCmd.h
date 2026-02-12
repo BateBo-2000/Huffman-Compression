@@ -2,16 +2,16 @@
 #include "Command.h"
 
 class UserInterface;
-class Archive;
+class ArchiveMaster;
 
 class ZipCmd : public Command {
 public:
-    ZipCmd(UserInterface& ui, Archive& archive);
+    ZipCmd(UserInterface& ui, ArchiveMaster& archive);
 
     void execute(const std::vector<std::string>& args) override;
     std::string description() const override;
 
 private:
     UserInterface& ui;
-    Archive& archive;
+    ArchiveMaster& archive;
 };
