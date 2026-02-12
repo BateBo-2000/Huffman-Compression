@@ -17,8 +17,7 @@ uint64_t ArchiveReader::fileSize64(const std::string& path) {
     return (uint64_t)std::filesystem::file_size(path);
 }
 
-void ArchiveReader::readMasterOffsets(const std::string& archivePath,
-    std::vector<uint64_t>& offsetsOut) {
+void ArchiveReader::readMasterOffsets(const std::string& archivePath, std::vector<uint64_t>& offsetsOut) {
     offsetsOut.clear();
 
     if (!std::filesystem::exists(archivePath))
@@ -60,9 +59,7 @@ void ArchiveReader::readLocalHeaderAndName(std::ifstream& in, uint64_t offset, a
         readAll(in, nameOut.data(), hOut.nameLen);
 }
 
-void ArchiveReader::readPayload(std::ifstream& in,
-    const arch::LocalHeaderFixed& h,
-    std::vector<uint8_t>& payloadOut) {
+void ArchiveReader::readPayload(std::ifstream& in, const arch::LocalHeaderFixed& h, std::vector<uint8_t>& payloadOut) {
     payloadOut.clear();
     if (arch::isDir(h.flags)) return;
 
@@ -71,8 +68,7 @@ void ArchiveReader::readPayload(std::ifstream& in,
         readAll(in, payloadOut.data(), payloadOut.size());
 }
 
-void ArchiveReader::hashPayload(const std::vector<uint8_t>& payload,
-    uint8_t outHash[arch::HASH_SIZE]) {
+void ArchiveReader::hashPayload(const std::vector<uint8_t>& payload, uint8_t outHash[arch::HASH_SIZE]) {
     std::hash<std::string_view> H;
     std::string_view sv(reinterpret_cast<const char*>(payload.data()), payload.size());
     size_t h = H(sv);
@@ -129,8 +125,8 @@ std::string ArchiveReader::check(const std::string& archivePath) {
     std::vector<uint64_t> offsets;
     readMasterOffsets(archivePath, offsets);
 
-    std::ifstream in(archivePath, std::ios::binary);
-    if (!in) throw std::runtime_error("ArchiveReader: cannot open archive");
+    std::ifstream ifstr(archivePath, std::ios::binary);
+    if (!ifstr) throw std::runtime_error("ArchiveReader: cannot open archive");
 
 
     std::string res;
@@ -139,12 +135,12 @@ std::string ArchiveReader::check(const std::string& archivePath) {
     for (uint64_t off : offsets) {
         arch::LocalHeaderFixed h{};
         std::string name;
-        readLocalHeaderAndName(in, off, h, name);
+        readLocalHeaderAndName(ifstr, off, h, name);
 
         if (arch::isDir(h.flags)) continue;
 
         std::vector<uint8_t> payload;
-        readPayload(in, h, payload);
+        readPayload(ifstr, h, payload);
 
         uint8_t calc[arch::HASH_SIZE];
         hashPayload(payload, calc);
