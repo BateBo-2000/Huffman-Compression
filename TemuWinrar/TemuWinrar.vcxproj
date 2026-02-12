@@ -108,6 +108,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <ObjectFileName>$(IntDir)%(Filename).obj</ObjectFileName>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -134,11 +135,11 @@
     <ClCompile Include="App.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="Archive\Archive.cpp" />
+    <ClCompile Include="Archive\ArchiveMaster.cpp" />
     <ClCompile Include="Archive\ArchiveIO\ArchiveReader.cpp" />
     <ClCompile Include="Archive\ArchiveIO\ArchiveWriter.cpp" />
-    <ClCompile Include="Archive\BitsIO\BitsReader.cpp" />
-    <ClCompile Include="Archive\BitsIO\BitsWriter.cpp" />
+    <ClCompile Include="Archive\BitsIO\BitReader.cpp" />
+    <ClCompile Include="Archive\BitsIO\BitWriter.cpp" />
     <ClCompile Include="Archive\Compression\HuffmanCompressor.cpp" />
     <ClCompile Include="Commands\HelpCmd.cpp" />
     <ClCompile Include="Execution\Controller.cpp" />
@@ -154,15 +155,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
-    <ClInclude Include="Archive\Archive.h" />
+    <ClInclude Include="Archive\ArchiveIO\ArchiveCommon.h" />
+    <ClInclude Include="Archive\ArchiveMaster.h" />
     <ClInclude Include="Archive\ArchiveIO\ArchiveReader.h" />
     <ClInclude Include="Archive\ArchiveIO\ArchiveWriter.h" />
-    <ClInclude Include="Archive\BitsIO\BitsReader.h" />
+    <ClInclude Include="Archive\BitsIO\BitReader.h" />
     <ClInclude Include="Archive\BitsIO\BitsWriter.h" />
     <ClInclude Include="Archive\Compression\HuffmanCompressor.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="Archive\MetaData.h" />
     <ClInclude Include="Commands\ExitCmd.h" />
     <ClInclude Include="Commands\HelpCmd.h" />
     <ClInclude Include="Execution\Controller.h" />

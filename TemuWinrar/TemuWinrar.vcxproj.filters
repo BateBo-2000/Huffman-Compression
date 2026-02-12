@@ -18,7 +18,7 @@
     <ClCompile Include="TemuWinrar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Archive\Archive.cpp">
+    <ClCompile Include="Archive\ArchiveMaster.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Commands\CheckCmd.cpp">
@@ -48,10 +48,10 @@
     <ClCompile Include="Commands\HelpCmd.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Archive\BitsIO\BitsWriter.cpp">
+    <ClCompile Include="Archive\BitsIO\BitWriter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Archive\BitsIO\BitsReader.cpp">
+    <ClCompile Include="Archive\BitsIO\BitReader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Archive\ArchiveIO\ArchiveWriter.cpp">
@@ -71,7 +71,7 @@
     <ClInclude Include="UI\ConsoleInterface.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Archive\Archive.h">
+    <ClInclude Include="Archive\ArchiveMaster.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Commands\Command.h">
@@ -110,7 +110,7 @@
     <ClInclude Include="Utils\StaticBinaryHeap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Archive\BitsIO\BitsReader.h">
+    <ClInclude Include="Archive\BitsIO\BitReader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Archive\BitsIO\BitsWriter.h">
@@ -122,10 +122,10 @@
     <ClInclude Include="Archive\ArchiveIO\ArchiveWriter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Archive\MetaData.h">
+    <ClInclude Include="Archive\Compression\HuffmanCompressor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Archive\Compression\HuffmanCompressor.h">
+    <ClInclude Include="Archive\ArchiveIO\ArchiveCommon.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

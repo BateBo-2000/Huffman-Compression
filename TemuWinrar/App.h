@@ -3,7 +3,7 @@
 #include "Execution/Invoker.h"
 #include "Execution/Controller.h"
 #include "UI/ConsoleInterface.h"
-#include "Archive/Archive.h"
+#include "Archive/ArchiveMaster.h"
 
 class App {
 public:
@@ -11,11 +11,10 @@ public:
     void run();
 
 private:
-    void init();
     void initCmd();
 
     Invoker invoker;
     ConsoleInterface ui;
-    Archive archive;
     Controller controller;
+    ArchiveMaster archive;
 };

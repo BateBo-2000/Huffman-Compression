@@ -12,17 +12,13 @@
 
 App::App() : controller(invoker, ui)
 {
-	init();
+    initCmd();
 }
 
 void App::run()
 {
+    ui.inform("SimpleArchiver ready. Type 'help' to list commands.");
     controller.start();
-}
-
-void App::init()
-{
-	initCmd();
 }
 
 void App::initCmd()
