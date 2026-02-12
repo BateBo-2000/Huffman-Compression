@@ -25,7 +25,7 @@ private:
         const arch::LocalHeaderFixed& h,
         std::vector<uint8_t>& payloadOut);
 
-    static void hashPayloadStdHash(const std::vector<uint8_t>& payload,
+    static void hashPayload(const std::vector<uint8_t>& payload,
         uint8_t outHash[arch::HASH_SIZE]);
 
     static bool hashEquals(const uint8_t a[arch::HASH_SIZE], const uint8_t b[arch::HASH_SIZE]);

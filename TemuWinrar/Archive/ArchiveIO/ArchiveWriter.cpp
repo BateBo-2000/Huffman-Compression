@@ -9,6 +9,7 @@ void ArchiveWriter::writeAll(std::ostream& os, const void* data, size_t n) {
     if (!os) throw std::runtime_error("write failed");
 }
 
+//Todo use the member funtion from ArchiveReader
 void ArchiveWriter::readAll(std::istream& is, void* data, size_t n) {
     is.read((char*)data, (std::streamsize)n);
     if (!is) throw std::runtime_error("read failed");
@@ -20,6 +21,12 @@ uint64_t ArchiveWriter::tellp64(std::ostream& os) {
     return (uint64_t)p;
 }
 
+//Todo use the member funtion from ArchiveReader
+
+/*
+  USE ONLY FOR SINGLE FILE INPUTS.
+  Don't use on the whole archive and or multiple files
+*/
 std::vector<uint8_t> ArchiveWriter::readWholeFile(const std::filesystem::path& p) {
     std::ifstream in(p, std::ios::binary);
     if (!in) throw std::runtime_error("open fail");
@@ -33,11 +40,13 @@ std::vector<uint8_t> ArchiveWriter::readWholeFile(const std::filesystem::path& p
     return v;
 }
 
+//stringify path
 std::string ArchiveWriter::toArchivePath(const std::filesystem::path& p) {
     return p.generic_string();
 }
 
-void ArchiveWriter::hashPayloadStdHash(const std::vector<uint8_t>& payload, uint8_t outHash[arch::HASH_SIZE]) {
+//Todo use reader's version
+void ArchiveWriter::hashPayload(const std::vector<uint8_t>& payload, uint8_t outHash[arch::HASH_SIZE]) {
     std::hash<std::string_view> H;
     std::string_view sv((const char*)payload.data(), payload.size());
     size_t h = H(sv);
@@ -45,9 +54,8 @@ void ArchiveWriter::hashPayloadStdHash(const std::vector<uint8_t>& payload, uint
     std::memcpy(outHash, &h, sizeof(h));
 }
 
-bool ArchiveWriter::readMasterOffsets(const std::string& path,
-    std::vector<uint64_t>& offs,
-    uint64_t& masterOff) {
+//Todo use reader's version - better
+bool ArchiveWriter::readMasterOffsets(const std::string& path, std::vector<uint64_t>& offs, uint64_t& masterOff) {
     offs.clear();
     masterOff = 0;
 
@@ -73,9 +81,8 @@ bool ArchiveWriter::readMasterOffsets(const std::string& path,
     return true;
 }
 
-std::string ArchiveWriter::readNameAt(const std::string& path,
-    uint64_t off,
-    arch::LocalHeaderFixed& h) {
+//Todo use reader's version - readLocalHeaderAndName
+std::string ArchiveWriter::readNameAt(const std::string& path, uint64_t off, arch::LocalHeaderFixed& h) {
     std::ifstream in(path, std::ios::binary);
     in.seekg(off);
     readAll(in, &h, sizeof(h));
@@ -104,7 +111,7 @@ uint64_t ArchiveWriter::appendDirEntry(std::ofstream& out, const std::string& na
     arch::LocalHeaderFixed h{};
     h.magic = arch::MAGIC_LHDR;
     h.flags = arch::FLAG_IS_DIR;
-    h.nameLen = name.size();
+    h.nameLen = (uint32_t)name.size();
     std::memset(h.hash, 0, arch::HASH_SIZE);
 
     writeAll(out, &h, sizeof(h));
@@ -112,10 +119,10 @@ uint64_t ArchiveWriter::appendDirEntry(std::ofstream& out, const std::string& na
     return off;
 }
 
-uint64_t ArchiveWriter::appendFileEntry(std::ofstream& out, const std::filesystem::path& p) {
-    std::vector<uint8_t> plain = readWholeFile(p);
+uint64_t ArchiveWriter::appendFileEntry(std::ofstream& out, const std::filesystem::path& filePath) {
+    std::vector<uint8_t> newFileRaw = readWholeFile(filePath);
     HuffmanCompressor hc;
-    std::vector<uint8_t> blob = hc.compress(plain);
+    std::vector<uint8_t> blob = hc.compress(newFileRaw);
 
     out.clear();
     out.seekp(0, std::ios::end);
@@ -123,16 +130,16 @@ uint64_t ArchiveWriter::appendFileEntry(std::ofstream& out, const std::filesyste
     if (pos < 0) {
         throw std::runtime_error("appendFileEntry: tellp failed (invalid stream position)");
     }
-    uint64_t off = static_cast<uint64_t>(pos);
+    uint64_t off = static_cast<uint64_t>(pos);      //
 
-    std::string name = toArchivePath(p);
+    std::string name = toArchivePath(filePath);
 
     arch::LocalHeaderFixed h{};
     h.magic = arch::MAGIC_LHDR;
-    h.originalSize = plain.size();
+    h.originalSize = newFileRaw.size();
     h.compressedSize = blob.size();
-    h.nameLen = name.size();
-    hashPayloadStdHash(blob, h.hash);
+    h.nameLen = (uint32_t)name.size();
+    hashPayload(blob, h.hash);
 
     writeAll(out, &h, sizeof(h));
     writeAll(out, name.data(), name.size());
@@ -140,49 +147,73 @@ uint64_t ArchiveWriter::appendFileEntry(std::ofstream& out, const std::filesyste
     return off;
 }
 
-
-void ArchiveWriter::setOrAdd(std::vector<EntryRef>& v,
-    const std::string& name,
-    uint64_t off) {
-    for (auto& e : v)
-        if (e.name == name) {
-            e.offset = off;
-            return;
-        }
-    v.push_back({ name, off });
+void ArchiveWriter::addOrFail(std::vector<EntryRef>& v, const std::string& name, uint64_t off)
+{
+    for (size_t i = 0; i < v.size(); ++i)
+    {
+        if (v[i].name == name)
+            throw std::runtime_error("Duplicate entry name: " + name);
+    }
+    v.push_back(EntryRef{ name, off });
 }
 
-void ArchiveWriter::loadEntryRefs(const std::string& path, const std::vector<uint64_t>& offs, std::vector<EntryRef>& out) {
+void ArchiveWriter::loadEntryRefs(const std::string& path, const std::vector<uint64_t>& offs, std::vector<EntryRef>& out)
+{
     out.clear();
-    for (auto off : offs) {
+
+    for (size_t i = 0; i < offs.size(); ++i)
+    {
+        uint64_t off = offs[i];
+
         arch::LocalHeaderFixed h{};
         std::string name = readNameAt(path, off, h);
-        out.push_back({ name, off });
+
+        EntryRef e;
+        e.name = name;
+        e.offset = off;
+
+        out.push_back(e);
     }
 }
 
-void ArchiveWriter::appendPathRecursive(std::ofstream& out, const std::filesystem::path& p, std::vector<EntryRef>& entries) { //chatgpt helped here
-    if (std::filesystem::is_directory(p)) {
-        std::string dn = toArchivePath(p) + "/";
-        uint64_t off = appendDirEntry(out, dn);
-        setOrAdd(entries, dn, off);
 
-        for (auto& e : std::filesystem::recursive_directory_iterator(p)) {          
-            if (std::filesystem::is_directory(e)) {
-                std::string d = toArchivePath(e.path()) + "/";
-                setOrAdd(entries, d, appendDirEntry(out, d));
+void ArchiveWriter::appendPathRecursive(std::ofstream& out,
+    const std::filesystem::path& p,
+    std::vector<EntryRef>& entries)
+{
+
+    if (std::filesystem::is_directory(p))
+    {
+        std::string dn = toArchivePath(p) + "/";
+        uint64_t dnOff = appendDirEntry(out, dn);
+        addOrFail(entries, dn, dnOff);
+
+        for (std::filesystem::recursive_directory_iterator it(p), end; it != end; ++it)
+        {
+            const std::filesystem::directory_entry& de = *it;
+
+            if (de.is_directory())
+            {
+                std::string d = toArchivePath(de.path()) + "/";
+                uint64_t off = appendDirEntry(out, d);
+                addOrFail(entries, d, off);
             }
-            else if (std::filesystem::is_regular_file(e)) {
-                std::string n = toArchivePath(e.path());
-                setOrAdd(entries, n, appendFileEntry(out, e.path()));
+            else if (de.is_regular_file())
+            {
+                std::string n = toArchivePath(de.path());
+                uint64_t off = appendFileEntry(out, de.path());
+                addOrFail(entries, n, off);
             }
         }
     }
-    else if (std::filesystem::is_regular_file(p)) {
+    else if (std::filesystem::is_regular_file(p))
+    {
         std::string n = toArchivePath(p);
-        setOrAdd(entries, n, appendFileEntry(out, p));
+        uint64_t off = appendFileEntry(out, p);
+        addOrFail(entries, n, off);
     }
 }
+
 
 void ArchiveWriter::createEmpty(const std::string& path) {
     std::ofstream out(path, std::ios::binary | std::ios::trunc);
@@ -198,35 +229,58 @@ bool ArchiveWriter::containsEntry(const std::vector<EntryRef>& entries, const st
 }
 
 
+void ArchiveWriter::checkConflictOrThrow(const std::string& n, const std::vector<EntryRef>& entries)
+{
+    if (containsEntry(entries, n))
+        throw std::runtime_error("Entry already exists in archive: " + n);
+}
+
 void ArchiveWriter::scanForConflictsOrThrow(const std::filesystem::path& p, const std::vector<EntryRef>& entries)
 {
-    auto checkOne = [&](const std::string& n)
+
+    if (std::filesystem::is_directory(p))
     {
-        if (containsEntry(entries, n))
-            throw std::runtime_error("Entry already exists in archive: " + n);
-    };
+        std::string rootName = toArchivePath(p) + "/";
+        checkConflictOrThrow(rootName, entries);
 
-    if (std::filesystem::is_directory(p)) {
-        checkOne(toArchivePath(p) + "/");
+        std::filesystem::recursive_directory_iterator it(p);
+        std::filesystem::recursive_directory_iterator end;
 
-        for (auto& e : std::filesystem::recursive_directory_iterator(p)) {
-            if (std::filesystem::is_directory(e)) {
-                checkOne(toArchivePath(e.path()) + "/");
+        for (; it != end; ++it)
+        {
+            const std::filesystem::directory_entry& de = *it;
+
+            if (std::filesystem::is_directory(de.path()))
+            {
+                std::string d = toArchivePath(de.path()) + "/";
+                checkConflictOrThrow(d, entries);
             }
-            else if (std::filesystem::is_regular_file(e)) {
-                checkOne(toArchivePath(e.path()));
+            else if (std::filesystem::is_regular_file(de.path()))
+            {
+                std::string f = toArchivePath(de.path());
+                checkConflictOrThrow(f, entries);
             }
         }
     }
-    else if (std::filesystem::is_regular_file(p)) {
-        checkOne(toArchivePath(p));
+    else if (std::filesystem::is_regular_file(p))
+    {
+        std::string name = toArchivePath(p);
+        checkConflictOrThrow(name, entries);
     }
-    else {
-        throw std::runtime_error("Path is neither file nor directory: " + p.string());
+    else
+    {
+        throw std::runtime_error(
+            "Path is neither file nor directory: " + p.string());
     }
 }
 
+
 void ArchiveWriter::append(const std::string& archivePath, const std::string& fileFath) {
+
+    if (!std::filesystem::exists(fileFath)) {
+        throw std::invalid_argument("File path doesnt exist.");
+    }
+
     std::vector<uint64_t> offs;
     uint64_t masterOff = 0;
 
@@ -237,7 +291,10 @@ void ArchiveWriter::append(const std::string& archivePath, const std::string& fi
 
     std::vector<EntryRef> entries;
     loadEntryRefs(archivePath, offs, entries);
-    scanForConflictsOrThrow(std::filesystem::path(fileFath), entries);
+
+    //Todo optimize
+    scanForConflictsOrThrow(std::filesystem::path(fileFath), entries);  //scands for dublicate names
+
 
     std::filesystem::resize_file(archivePath, masterOff);
 

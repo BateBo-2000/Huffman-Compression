@@ -48,10 +48,7 @@ void ArchiveReader::readMasterOffsets(const std::string& archivePath,
         readAll(in, offsetsOut.data(), offsetsOut.size() * sizeof(uint64_t));
 }
 
-void ArchiveReader::readLocalHeaderAndName(std::ifstream& in,
-    uint64_t offset,
-    arch::LocalHeaderFixed& hOut,
-    std::string& nameOut) {
+void ArchiveReader::readLocalHeaderAndName(std::ifstream& in, uint64_t offset, arch::LocalHeaderFixed& hOut, std::string& nameOut) {
     in.seekg((std::streamoff)offset, std::ios::beg);
     readAll(in, &hOut, sizeof(hOut));
 
@@ -74,18 +71,18 @@ void ArchiveReader::readPayload(std::ifstream& in,
         readAll(in, payloadOut.data(), payloadOut.size());
 }
 
-void ArchiveReader::hashPayloadStdHash(const std::vector<uint8_t>& payload,
+void ArchiveReader::hashPayload(const std::vector<uint8_t>& payload,
     uint8_t outHash[arch::HASH_SIZE]) {
     std::hash<std::string_view> H;
     std::string_view sv(reinterpret_cast<const char*>(payload.data()), payload.size());
     size_t h = H(sv);
 
     std::memset(outHash, 0, arch::HASH_SIZE);
-    std::memcpy(outHash, &h, sizeof(h)); // demo: HASH_SIZE=8
+    std::memcpy(outHash, &h, sizeof(h));    //size_of(size_t)
 }
 
 bool ArchiveReader::hashEquals(const uint8_t a[arch::HASH_SIZE], const uint8_t b[arch::HASH_SIZE]) {
-    return std::memcmp(a, b, arch::HASH_SIZE) == 0;
+    return std::memcmp(a, b, arch::HASH_SIZE) == 0; //bilo po burzo???
 }
 
 void ArchiveReader::ensureParentDirs(const std::string& fullPath) {
@@ -95,7 +92,7 @@ void ArchiveReader::ensureParentDirs(const std::string& fullPath) {
         std::filesystem::create_directories(parent);
 }
 
-std::string ArchiveReader::info(const std::string& archivePath) {
+std::string ArchiveReader::info(const std::string& archivePath) { 
     std::vector<uint64_t> offsets;
     readMasterOffsets(archivePath, offsets);
 
@@ -150,7 +147,7 @@ std::string ArchiveReader::check(const std::string& archivePath) {
         readPayload(in, h, payload);
 
         uint8_t calc[arch::HASH_SIZE];
-        hashPayloadStdHash(payload, calc);
+        hashPayload(payload, calc);
 
         if (!hashEquals(calc, h.hash)) {
             res+="[CORRUPT] " + name + "\n";

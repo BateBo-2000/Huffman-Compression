@@ -14,7 +14,7 @@ struct DefaultLess {
 template <typename T, size_t capacity, typename Compare = DefaultLess<T>>
 class StaticBinaryHeap {
 public:
-    StaticBinaryHeap() : size(0) {}
+    StaticBinaryHeap() : size(0), data{} {}
 
     size_t getSize() const noexcept {
         return size;

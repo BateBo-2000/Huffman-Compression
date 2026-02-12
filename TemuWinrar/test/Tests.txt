@@ -24,8 +24,7 @@ Available commands:
 
 To get help for a command add it as an arg: help <cmd name>
 > zip test\arch.zip test\testFolder
-Failed to append next file to Archvie.Entry already exists in archive: test/testFolder/
-Entry already exists in archive: test/testFolder/
+File test\testFolder added to archive.
 > zip test\arch.zip test\testFolder\testFile1.txt
 Failed to append next file to Archvie.Entry already exists in archive: test/testFolder/testFile1.txt
 Entry already exists in archive: test/testFolder/testFile1.txt
@@ -68,7 +67,6 @@ Check OK: no corrupted entries.
 > unzip test\arch.zip test\results
 Unzip completed. Files unzipped in test\results
 > exit
-
 
 And in the test folder there will be 2 new things:
 -arch.zip - the archive (should be ~85kb)

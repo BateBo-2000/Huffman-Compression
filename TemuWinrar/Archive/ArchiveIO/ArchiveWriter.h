@@ -26,7 +26,7 @@ private:
     // helpers
     static std::vector<uint8_t> readWholeFile(const std::filesystem::path& p);
     static std::string toArchivePath(const std::filesystem::path& p);
-    static void hashPayloadStdHash(const std::vector<uint8_t>& payload,
+    static void hashPayload(const std::vector<uint8_t>& payload,
         uint8_t outHash[arch::HASH_SIZE]);
 
     // master/footer
@@ -47,10 +47,11 @@ private:
 
     // active list helpers
     static void loadEntryRefs(const std::string& archivePath, const std::vector<uint64_t>& offsets, std::vector<EntryRef>& out);
-    static void setOrAdd(std::vector<EntryRef>& v, const std::string& name, uint64_t off);
+    static void addOrFail(std::vector<EntryRef>& v, const std::string& name, uint64_t off);
     static void appendPathRecursive(std::ofstream& out, const std::filesystem::path& p, std::vector<EntryRef>& entries);
 
     //dublicate checkers
     static void scanForConflictsOrThrow(const std::filesystem::path& p, const std::vector<EntryRef>& entries);
     static bool containsEntry(const std::vector<EntryRef>& entries, const std::string& name);
+    static void checkConflictOrThrow(const std::string& n, const std::vector<EntryRef>& entries);
 };

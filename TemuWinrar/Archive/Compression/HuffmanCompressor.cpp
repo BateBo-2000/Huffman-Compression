@@ -73,7 +73,7 @@ std::vector<uint8_t> HuffmanCompressor::compress(const std::vector<uint8_t>& inp
     blob.reserve(sizeof(uint64_t) + ASCII * sizeof(uint64_t) + input.size());
 
         
-    appendPOD<uint64_t>(blob, d.originalSize);  // write freq table
+    appendPOD<uint64_t>(blob, d.originalSize);  // write original size
 
     
     for (size_t i = 0; i < ASCII; i++)          // write freq table
@@ -108,7 +108,7 @@ static void readPOD(const std::vector<uint8_t>& in, size_t& offset, T& outValue)
 std::vector<uint8_t> HuffmanCompressor::decompress(const std::vector<uint8_t>& blob)
 {
     // Header size: originalSize + freq[256]
-    const size_t headerSize = sizeof(uint64_t) + ASCII * sizeof(uint64_t);
+    constexpr size_t headerSize = sizeof(uint64_t) + ASCII * sizeof(uint64_t);
     if (blob.size() < headerSize)
         throw std::runtime_error("Huffman decompress: blob too small (missing header)");
 
@@ -155,7 +155,7 @@ std::vector<uint8_t> HuffmanCompressor::decompress(const std::vector<uint8_t>& b
     
     BitReader br(blob, offset);                     //bitStream starts at the offset bytes
 
-    for (uint64_t produced = 0; produced < originalSize; produced++)
+    for (int i = 0; i < originalSize; i++)
     {
         Node* cur = root;
 
