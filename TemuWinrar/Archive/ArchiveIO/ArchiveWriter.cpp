@@ -117,7 +117,14 @@ uint64_t ArchiveWriter::appendFileEntry(std::ofstream& out, const std::filesyste
     HuffmanCompressor hc;
     std::vector<uint8_t> blob = hc.compress(plain);
 
-    uint64_t off = tellp64(out);
+    out.clear();
+    out.seekp(0, std::ios::end);
+    std::streampos pos = out.tellp();
+    if (pos < 0) {
+        throw std::runtime_error("appendFileEntry: tellp failed (invalid stream position)");
+    }
+    uint64_t off = static_cast<uint64_t>(pos);
+
     std::string name = toArchivePath(p);
 
     arch::LocalHeaderFixed h{};
@@ -133,6 +140,7 @@ uint64_t ArchiveWriter::appendFileEntry(std::ofstream& out, const std::filesyste
     return off;
 }
 
+
 void ArchiveWriter::setOrAdd(std::vector<EntryRef>& v,
     const std::string& name,
     uint64_t off) {
@@ -144,9 +152,7 @@ void ArchiveWriter::setOrAdd(std::vector<EntryRef>& v,
     v.push_back({ name, off });
 }
 
-void ArchiveWriter::loadEntryRefs(const std::string& path,
-    const std::vector<uint64_t>& offs,
-    std::vector<EntryRef>& out) {
+void ArchiveWriter::loadEntryRefs(const std::string& path, const std::vector<uint64_t>& offs, std::vector<EntryRef>& out) {
     out.clear();
     for (auto off : offs) {
         arch::LocalHeaderFixed h{};
@@ -155,15 +161,13 @@ void ArchiveWriter::loadEntryRefs(const std::string& path,
     }
 }
 
-void ArchiveWriter::appendPathRecursive(std::ofstream& out,
-    const std::filesystem::path& p,
-    std::vector<EntryRef>& entries) {
+void ArchiveWriter::appendPathRecursive(std::ofstream& out, const std::filesystem::path& p, std::vector<EntryRef>& entries) { //chatgpt helped here
     if (std::filesystem::is_directory(p)) {
         std::string dn = toArchivePath(p) + "/";
         uint64_t off = appendDirEntry(out, dn);
         setOrAdd(entries, dn, off);
 
-        for (auto& e : std::filesystem::recursive_directory_iterator(p)) {
+        for (auto& e : std::filesystem::recursive_directory_iterator(p)) {          
             if (std::filesystem::is_directory(e)) {
                 std::string d = toArchivePath(e.path()) + "/";
                 setOrAdd(entries, d, appendDirEntry(out, d));
@@ -186,17 +190,56 @@ void ArchiveWriter::createEmpty(const std::string& path) {
     writeMasterAndFooter(out, empty);
 }
 
+bool ArchiveWriter::containsEntry(const std::vector<EntryRef>& entries, const std::string& name)
+{
+    for (const auto& e : entries)
+        if (e.name == name) return true;
+    return false;
+}
+
+
+void ArchiveWriter::scanForConflictsOrThrow(const std::filesystem::path& p, const std::vector<EntryRef>& entries)
+{
+    auto checkOne = [&](const std::string& n)
+    {
+        if (containsEntry(entries, n))
+            throw std::runtime_error("Entry already exists in archive: " + n);
+    };
+
+    if (std::filesystem::is_directory(p)) {
+        checkOne(toArchivePath(p) + "/");
+
+        for (auto& e : std::filesystem::recursive_directory_iterator(p)) {
+            if (std::filesystem::is_directory(e)) {
+                checkOne(toArchivePath(e.path()) + "/");
+            }
+            else if (std::filesystem::is_regular_file(e)) {
+                checkOne(toArchivePath(e.path()));
+            }
+        }
+    }
+    else if (std::filesystem::is_regular_file(p)) {
+        checkOne(toArchivePath(p));
+    }
+    else {
+        throw std::runtime_error("Path is neither file nor directory: " + p.string());
+    }
+}
+
 void ArchiveWriter::append(const std::string& archivePath, const std::string& fileFath) {
     std::vector<uint64_t> offs;
     uint64_t masterOff = 0;
 
-    if (!readMasterOffsets(archivePath, offs, masterOff))
-        createEmpty(archivePath), readMasterOffsets(archivePath, offs, masterOff);
-
-    std::filesystem::resize_file(archivePath, masterOff);
+    if (!readMasterOffsets(archivePath, offs, masterOff)) {
+        createEmpty(archivePath);
+        readMasterOffsets(archivePath, offs, masterOff);
+    }
 
     std::vector<EntryRef> entries;
     loadEntryRefs(archivePath, offs, entries);
+    scanForConflictsOrThrow(std::filesystem::path(fileFath), entries);
+
+    std::filesystem::resize_file(archivePath, masterOff);
 
     std::ofstream out(archivePath, std::ios::binary | std::ios::app);
 

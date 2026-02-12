@@ -9,8 +9,8 @@ UnzipCmd::UnzipCmd(UserInterface& ui, ArchiveMaster& archive)
 
 void UnzipCmd::execute(const std::vector<std::string>& args)
 {
-    if (args.size() != 2) {
-        ui.error("Usage: unzip <archive> <outDir>");
+    if (args.size() < 2 || args.size() > 3) {
+        ui.error("Usage: unzip <archive> [outDir]");
         return;
     }
 
@@ -25,7 +25,7 @@ void UnzipCmd::execute(const std::vector<std::string>& args)
         
 
         archive.unzip(args[1], out);
-        ui.inform("Unzip completed.");
+        ui.inform("Unzip completed. Files unzipped in "+ (out.empty()? std::string("here.") : out));
     }
     catch (const std::exception& e) {
         ui.error(std::string("Unzip failed: ") + e.what());

@@ -20,7 +20,7 @@ void CheckCmd::execute(const std::vector<std::string>& args)
         ui.inform(result);
     }
     catch (const std::exception& e) {
-        ui.error(std::string("Check failed: ") + e.what());
+        ui.error(std::string("Check failed: Archive is corrupt!!!\n") + e.what());
     }
 }
 

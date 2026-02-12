@@ -46,15 +46,11 @@ private:
     static uint64_t appendFileEntry(std::ofstream& out, const std::filesystem::path& p);
 
     // active list helpers
-    static void loadEntryRefs(const std::string& archivePath,
-        const std::vector<uint64_t>& offsets,
-        std::vector<EntryRef>& out);
+    static void loadEntryRefs(const std::string& archivePath, const std::vector<uint64_t>& offsets, std::vector<EntryRef>& out);
+    static void setOrAdd(std::vector<EntryRef>& v, const std::string& name, uint64_t off);
+    static void appendPathRecursive(std::ofstream& out, const std::filesystem::path& p, std::vector<EntryRef>& entries);
 
-    static void setOrAdd(std::vector<EntryRef>& v,
-        const std::string& name,
-        uint64_t off);
-
-    static void appendPathRecursive(std::ofstream& out,
-        const std::filesystem::path& p,
-        std::vector<EntryRef>& entries);
+    //dublicate checkers
+    static void scanForConflictsOrThrow(const std::filesystem::path& p, const std::vector<EntryRef>& entries);
+    static bool containsEntry(const std::vector<EntryRef>& entries, const std::string& name);
 };

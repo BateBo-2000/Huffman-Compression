@@ -8,22 +8,20 @@
 #include <cstring>
 #include <filesystem>
 
-namespace fs = std::filesystem;
-
 void ArchiveReader::readAll(std::istream& is, void* data, size_t n) {
     is.read(reinterpret_cast<char*>(data), (std::streamsize)n);
     if (!is) throw std::runtime_error("ArchiveReader: read failed");
 }
 
 uint64_t ArchiveReader::fileSize64(const std::string& path) {
-    return (uint64_t)fs::file_size(path);
+    return (uint64_t)std::filesystem::file_size(path);
 }
 
 void ArchiveReader::readMasterOffsets(const std::string& archivePath,
     std::vector<uint64_t>& offsetsOut) {
     offsetsOut.clear();
 
-    if (!fs::exists(archivePath))
+    if (!std::filesystem::exists(archivePath))
         throw std::runtime_error("ArchiveReader: archive does not exist");
 
     std::ifstream in(archivePath, std::ios::binary);
@@ -91,10 +89,10 @@ bool ArchiveReader::hashEquals(const uint8_t a[arch::HASH_SIZE], const uint8_t b
 }
 
 void ArchiveReader::ensureParentDirs(const std::string& fullPath) {
-    fs::path p(fullPath);
-    fs::path parent = p.parent_path();
+    std::filesystem::path p(fullPath);
+    std::filesystem::path parent = p.parent_path();
     if (!parent.empty())
-        fs::create_directories(parent);
+        std::filesystem::create_directories(parent);
 }
 
 std::string ArchiveReader::info(const std::string& archivePath) {
@@ -178,10 +176,10 @@ void ArchiveReader::unzip(const std::string& archivePath, const std::string& out
         readLocalHeaderAndName(in, off, h, name);
 
         // Build output path
-        fs::path outPath = fs::path(outDir) / fs::path(name);
+        std::filesystem::path outPath = std::filesystem::path(outDir) / std::filesystem::path(name);   //This makes <outDir> '/' <name>
 
         if (arch::isDir(h.flags)) {
-            fs::create_directories(outPath);
+            std::filesystem::create_directories(outPath);
             continue;
         }
 
@@ -193,13 +191,14 @@ void ArchiveReader::unzip(const std::string& archivePath, const std::string& out
         std::vector<uint8_t> plain = hc.decompress(blob);
 
         // Ensure dirs + write file
-        fs::create_directories(outPath.parent_path());
+        std::filesystem::path parent = outPath.parent_path();
+        if (!parent.empty())
+            std::filesystem::create_directories(parent);
+
         std::ofstream out(outPath, std::ios::binary | std::ios::trunc);
         if (!out) throw std::runtime_error("ArchiveReader: cannot create output file: " + outPath.string());
 
         if (!plain.empty())
             out.write(reinterpret_cast<const char*>(plain.data()), (std::streamsize)plain.size());
     }
-
-    std::cout << "Unzip done to: " << outDir << "\n";
 }

@@ -7,17 +7,13 @@
 
 void ArchiveMaster::zip(const std::string& archivePath, const std::string& input) {
 
-    if (!std::filesystem::exists(archivePath)) {
-        ArchiveWriter::createEmpty(archivePath);
-    }
-    else if (!std::filesystem::is_regular_file(archivePath)) {
-        throw std::runtime_error("Archive path exists but is not a file");
+    if (!std::filesystem::exists(input)) {
+        throw std::invalid_argument("File path doesnt exist.");
     }
     ArchiveWriter::append(archivePath, input);
 }
 
-void ArchiveMaster::unzip(const std::string& archivePath,
-    const std::string& outDir) {
+void ArchiveMaster::unzip(const std::string& archivePath,const std::string& outDir) {
     ArchiveReader::unzip(archivePath, outDir);
 }
 
@@ -29,7 +25,6 @@ std::string ArchiveMaster::check(const std::string& archivePath) {
     return ArchiveReader::check(archivePath);
 }
 
-void ArchiveMaster::update(const std::string&,
-    const std::vector<std::string>&) {
+void ArchiveMaster::update(const std::string&, const std::vector<std::string>&) {
     throw std::runtime_error("update command not implemented yet");
 }
