@@ -223,8 +223,11 @@ void ArchiveWriter::createEmpty(const std::string& path) {
 
 bool ArchiveWriter::containsEntry(const std::vector<EntryRef>& entries, const std::string& name)
 {
-    for (const auto& e : entries)
-        if (e.name == name) return true;
+    for (size_t i = 0; i < entries.size(); ++i)
+    {
+        if (entries[i].name == name)
+            return true;
+    }
     return false;
 }
 
