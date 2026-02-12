@@ -1,4 +1,5 @@
 #include "App.h"
+//#define DEBUG
 
 int main()
 {

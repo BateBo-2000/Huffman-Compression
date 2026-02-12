@@ -5,8 +5,7 @@
 #include <utility> //swap
 
 
-
-
+#ifdef DEBUG
 
 // just for debug function
 #include <iostream>
@@ -43,7 +42,7 @@ void HuffmanCompressor::debugPrintDictionary(const std::vector<uint8_t>& input)
             << std::setw(8) << chStr
             << std::setw(12) << d.freq[i];
 
- 
+
         for (size_t b = 0; b < d.codes[i].size(); ++b)
             std::cout << (d.codes[i][b] ? '1' : '0');
 
@@ -52,6 +51,12 @@ void HuffmanCompressor::debugPrintDictionary(const std::vector<uint8_t>& input)
 
     std::cout << "========================================\n";
 }
+
+
+#endif // DEBUG
+
+
+
 
 
 

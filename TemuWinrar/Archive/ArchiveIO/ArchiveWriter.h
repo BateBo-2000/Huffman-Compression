@@ -26,20 +26,14 @@ private:
     // helpers
     static std::vector<uint8_t> readWholeFile(const std::filesystem::path& p);
     static std::string toArchivePath(const std::filesystem::path& p);
-    static void hashPayload(const std::vector<uint8_t>& payload,
-        uint8_t outHash[arch::HASH_SIZE]);
+    static void hashPayload(const std::vector<uint8_t>& payload, uint8_t outHash[arch::HASH_SIZE]);
 
     // master/footer
-    static bool readMasterOffsets(const std::string& archivePath,
-        std::vector<uint64_t>& offsetsOut,
-        uint64_t& masterOffsetOut);
+    static bool readMasterOffsets(const std::string& archivePath, std::vector<uint64_t>& offsetsOut, uint64_t& masterOffsetOut);
 
-    static std::string readNameAt(const std::string& archivePath,
-        uint64_t offset,
-        arch::LocalHeaderFixed& hOut);
+    static std::string readNameAt(const std::string& archivePath, uint64_t offset, arch::LocalHeaderFixed& hOut);
 
-    static void writeMasterAndFooter(std::ofstream& out,
-        const std::vector<EntryRef>& entries);
+    static void writeMasterAndFooter(std::ofstream& out, const std::vector<EntryRef>& entries);
 
     // entries
     static uint64_t appendDirEntry(std::ofstream& out, const std::string& name);

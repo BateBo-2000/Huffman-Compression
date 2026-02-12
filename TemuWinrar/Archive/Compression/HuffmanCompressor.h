@@ -15,7 +15,10 @@ public:
         std::vector<uint8_t> compressed;            //data
     };
 
+#ifdef DEBUG
     void debugPrintDictionary(const std::vector<uint8_t>& input);
+#endif // DEBUG
+
 
     
 
