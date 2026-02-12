@@ -1,0 +1,78 @@
+These are test. Just paste the commands 1 by 1 or in bulk and you will receive the shouwn result.
+
+Basic tests:
+help
+zip test\arch.zip test\testFolder
+zip test\arch.zip test\testFolder\testFile1.txt
+info test\arch.zip
+check test\arch.zip
+unzip test\arch.zip test\results
+exit
+
+On the CLI you will see exactly this:
+
+SimpleArchiver ready. Type 'help' to list commands.
+> help
+Available commands:
+  - exit
+  - help
+  - check
+  - info
+  - unzip
+  - update
+  - zip
+
+To get help for a command add it as an arg: help <cmd name>
+> zip test\arch.zip test\testFolder
+Failed to append next file to Archvie.Entry already exists in archive: test/testFolder/
+Entry already exists in archive: test/testFolder/
+> zip test\arch.zip test\testFolder\testFile1.txt
+Failed to append next file to Archvie.Entry already exists in archive: test/testFolder/testFile1.txt
+Entry already exists in archive: test/testFolder/testFile1.txt
+> info test\arch.zip
+Archive: test\arch.zip
+Entries: 6
+
+[DIR ] test/testFolder/
+  original:   0 bytes
+  compressed: 0 bytes
+
+[FILE] test/testFolder/photo.jpg
+  original:   15262 bytes
+  compressed: 17057 bytes
+  ratio:      111.761%
+
+[FILE] test/testFolder/testFile1.txt
+  original:   840 bytes
+  compressed: 2301 bytes
+  ratio:      273.929%
+
+[FILE] test/testFolder/testFile2.txt
+  original:   86562 bytes
+  compressed: 51940 bytes
+  ratio:      60.0032%
+
+[DIR ] test/testFolder/testTestTestFolder/
+  original:   0 bytes
+  compressed: 0 bytes
+
+[FILE] test/testFolder/testTestTestFolder/testFile4.txt
+  original:   26998 bytes
+  compressed: 14430 bytes
+  ratio:      53.4484%
+
+
+> check test\arch.zip
+Check OK: no corrupted entries.
+
+> unzip test\arch.zip test\results
+Unzip completed. Files unzipped in test\results
+> exit
+
+
+And in the test folder there will be 2 new things:
+-arch.zip - the archive (should be ~85kb)
+-results - folder where is an exact copy of the testFolder with parent test
+
+
+
