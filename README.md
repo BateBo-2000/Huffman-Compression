@@ -1,8 +1,8 @@
-# Huffman / LZW Archiver — Command Line Compression Tool
+# Huffman Command Line Compression Tool
 
 ## Overview
 
-This project implements a command-line archiver that compresses multiple files and directories into a single archive using either the **Huffman** or **LZW** compression algorithm. The program supports full archive lifecycle operations including creation, extraction, integrity verification, listing, and incremental updates.
+This project implements a command-line archiver that compresses multiple files and directories into a single archive using the **Huffman** compression algorithm. The program supports full archive lifecycle operations including creation, extraction, integrity verification, listing, and incremental updates.
 
 The focus of the implementation is **correctness**, **algorithmic compression**, and **efficient memory usage**, while handling archives that may be larger than available RAM.
 
@@ -55,20 +55,18 @@ The focus of the implementation is **correctness**, **algorithmic compression**,
 
 ## Compression Algorithms
 
-The archiver supports:
-
-- **Huffman coding**
+The archiver supports **Huffman coding**
 
 ---
 
 ## Memory & Performance Requirements
 
 - Archives may be larger than available RAM
-- The implementation must:
-  - NOT load the entire archive into memory
-  - NOT operate purely byte-by-byte from disk without caching
-- Uses buffered/block processing and in-memory indexing for speed
-- Emphasis on operational efficiency and scalability
+- The implementation:
+  - doesn't load the entire archive into memory
+  - doesn't operate purely byte-by-byte from disk without caching
+- Uses file-by-file processing and in-memory indexing for speed
+- Requires enough memory to encode each file separately.
 
 ---
 
@@ -81,6 +79,7 @@ The archiver supports:
 ## Testing
 
 //TODO
+
 ---
 
 ## Example Commands
